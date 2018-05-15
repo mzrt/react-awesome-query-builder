@@ -34,6 +34,14 @@ export default {
                     : children.first();
             },
         },
+        NOT: {
+            label: 'Not',
+            formatConj: (children, conj, isForDisplay) => {
+                return children.size > 1 ? 
+                    '!(' + children.join(' '+ (isForDisplay ? "AND" : "&&") +' ') + ')' 
+                    : children.first();
+            },
+        },
     },
     fields: {
         members: {
@@ -212,6 +220,11 @@ export default {
                     ],
                 }
             },
+            typeFunctions:[
+                {name:"toUpperCase", retVal:"text"},
+                {name:"toLowerCase", retVal:"text"},
+                {name:"toNumber", retVal:"number"},
+            ],
         },
         number: {
             valueSources: ['value'],
@@ -236,6 +249,9 @@ export default {
                     }
                 }
             },
+            typeFunctions:[
+                {name:"toString", retVal:"text"},
+            ],
         },
         date: {
             widgets: {
@@ -637,15 +653,15 @@ export default {
     },
     settings: {
         locale: {
-            short: 'en',
-            full: 'en-US',
-            antd: en_US,
+            short: 'ru',
+            full: 'ru-RU',
+            antd: ru_RU,
         },
         maxLabelsLength: 50,
         hideConjForOne: true,
         renderSize: 'small',
         renderConjsAsRadios: false,
-        renderFieldAndOpAsDropdown: false,
+        renderFieldAndOpAsDropdown: true,
         customFieldSelectProps: {
             showSearch: true
         },

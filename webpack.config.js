@@ -41,7 +41,7 @@ module.exports = {
         }
     }],
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.jsx?$/,
                 loaders: ['babel-loader'],

@@ -14,6 +14,7 @@
     "build-npm": "rm -rf build/npm && babel -d build/npm/lib ./modules && cp README.md build/npm && find build/npm/lib -type d -name __tests__ | xargs rm -rf && node -p 'p=require(\"./package\");p.main=\"lib\";p.scripts=p.devDependencies=undefined;JSON.stringify(p,null,2)' > build/npm/package.json",
     "prepublish": "npm run build-npm",
     "build-examples": "cd examples && webpack --config webpack.config.js",
+    "build-examples:ob": "cd examples && webpack --config webpack.config-onlybuilder.js",
     "examples": "cd examples && webpack-dev-server --config webpack.config.js -d --hot --inline --display-error-details --colors --history-api-fallback --no-info --port 3001"
   },
   "repository": {
@@ -31,8 +32,10 @@
   "homepage": "https://github.com/ukrbublik/react-awesome-query-builder",
   "dependencies": {
     "antd": "^2.12.2",
+    "babel-polyfill": "^6.26.0",
     "classnames": "^2.2.5",
     "clone": "^2.1.1",
+    "fetch-ie8": "^1.5.0",
     "immutable": "^3.7.6",
     "json-stringify-safe": "^5.0.1",
     "lodash": "^4.6",
@@ -73,6 +76,7 @@
     "eslint-config-airbnb": "0.0.6",
     "eslint-plugin-react": "^2.6.2",
     "expect": "^1.15.2",
+    "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.8.5",
     "history": "^1.13",
     "jquery": "^3.0.0",
