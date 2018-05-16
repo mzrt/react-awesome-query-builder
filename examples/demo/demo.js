@@ -3,10 +3,10 @@ import {Query, Builder, Preview, Utils} from 'react-awesome-query-builder';
 const {queryBuilderFormat, queryString} = Utils;
 import config from './config';
 var stringify = require('json-stringify-safe');
-import '../css/reset.scss';
-import '../css/styles.scss';
-import '../css/compact_styles.scss';
-import '../css/denormalize.scss';
+import '../../css/reset.scss';
+import '../../css/styles.scss';
+import '../../css/compact_styles.scss';
+import '../../css/denormalize.scss';
 const Immutable = require('immutable');
 const transit = require('transit-immutable-js');
 
