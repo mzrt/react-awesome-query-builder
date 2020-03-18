@@ -1,8 +1,13 @@
 export { default as Query } from './components/Query';
 export { default as Builder } from './components/Builder';
-export { default as Preview } from './components/Preview';
 
-export * as Widgets from './components/widgets/index.js';
-export * as Operators from './components/operators';
-export * as Utils from './utils';
+import * as Export from './export';
+import * as Import from './import';
+import * as Widgets from './components/widgets/index';
+import * as Operators from './components/operators';
+import * as BasicUtils from './utils';
+const Utils = {...BasicUtils, ...Export, ...Import};
+export {Widgets, Operators, Utils, Export, Import};
+
+export {default as BasicConfig} from './config/basic';
 

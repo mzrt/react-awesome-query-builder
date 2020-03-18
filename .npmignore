@@ -1,7 +1,7 @@
 examples
+sandbox
 scripts
 bower.json
-karma.conf.js
 tests.webpack.js
 webpack.config.js
 .babelrc

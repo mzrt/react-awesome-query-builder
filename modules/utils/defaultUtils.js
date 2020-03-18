@@ -1,14 +1,13 @@
 import Immutable from 'immutable';
-import map from 'lodash/map';
-import range from 'lodash/range';
 import uuid from './uuid';
 import {getFieldConfig, getFirstField, getFirstOperator, getOperatorConfig} from './configUtils';
-import {_getNewValueForFieldOp} from '../stores/tree'
+import {getNewValueForFieldOp} from '../utils/validation';
 
 
-export const defaultField = (config, canGetFirst = true) => {
+export const defaultField = (config, canGetFirst = true, parentRuleGroupPath = null) => {
   return typeof config.settings.defaultField === 'function' ?
-    config.settings.defaultField() : (config.settings.defaultField || (canGetFirst ? getFirstField(config) : null));
+    config.settings.defaultField(parentRuleGroupPath) : 
+    (config.settings.defaultField || (canGetFirst ? getFirstField(config, parentRuleGroupPath) : null));
 };
 
 export const defaultOperator = (config, field, canGetFirst = true) => {
@@ -35,10 +34,10 @@ export const defaultOperatorOptions = (config, operator, field) => {
   ) : null;
 };
 
-export const defaultRuleProperties = (config) => {
+export const defaultRuleProperties = (config, parentRuleGroupPath = null) => {
   let field = null, operator = null;
   if (config.settings.setDefaultFieldAndOp) {
-    field = defaultField(config);
+    field = defaultField(config, true, parentRuleGroupPath);
     operator = defaultOperator(config, field);
   }
   let current = new Immutable.Map({
@@ -51,13 +50,12 @@ export const defaultRuleProperties = (config) => {
   });
   
   if (field && operator) {
-    let {newValue, newValueSrc, newValueType} = _getNewValueForFieldOp (config, config, current, field, operator, 'operator');
+    let {newValue, newValueSrc, newValueType} = getNewValueForFieldOp(config, config, current, field, operator, 'operator', false);
     current = current
         .set('value', newValue)
         .set('valueSrc', newValueSrc)
         .set('valueType', newValueType);
   }
-
   return current; 
 };
 
@@ -93,3 +91,4 @@ export const defaultRoot = (config) => {
     properties: defaultGroupProperties(config)
   });
 }
+

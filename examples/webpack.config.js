@@ -1,54 +1,118 @@
 var webpack = require('webpack');
 var path = require('path');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const isProd = (process.env.NODE_ENV != "development");
+
+var plugins = [];
+if (isProd) {
+    plugins = [
+        new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /en|ru|es-us/),
+        //new BundleAnalyzerPlugin(),
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || "development")
+        }),
+    ];
+}
 
 module.exports = {
-    devtool: 'source-map',
-    entry: './index',
+    plugins,
+    mode: process.env.NODE_ENV || "development",
+    devtool: isProd ? 'source-map' : 'source-map',
+    devServer: {
+        port: 3001,
+        inline: true,
+        historyApiFallback: true,
+    },
+    entry: [
+        //'react-hot-loader/patch', // seems like excess
+        './index',
+    ],
     output: {
         path: __dirname,
         filename: 'bundle.js'
     },
-    resolveLoader: {
-        modulesDirectories: ['node_modules']
-    },
     resolve: {
-        extensions: ['', '.js']
+        modules: [
+            'node_modules',
+            path.resolve(__dirname, '../node_modules'),
+        ],
+        alias: {
+            'react-awesome-query-builder': path.resolve(__dirname, '../modules'),
+            'react-dom': '@hot-loader/react-dom',
+        },
+        extensions: ['.tsx', '.ts', '.js', '.jsx']
     },
     module: {
-        loaders: [
+        rules: [
+            // {
+            //     test: /\.tsx?$/,
+            //     loader: 'ts-loader',
+            //     exclude: /node_modules/,
+            // },
             {
-                test: /\.js$/,
-                loaders: ['react-hot-loader', 'babel-loader'],
+                test: /\.[jt]sx?$/,
+                loaders: 'babel-loader',
+                options: {
+                    presets: [
+                        '@babel/preset-env', 
+                        '@babel/preset-react',
+                        '@babel/preset-typescript', // or can use 'ts-loader' instead
+                    ],
+                    plugins: [
+                        ["@babel/plugin-proposal-decorators", { "legacy": true }],
+                        ["@babel/plugin-proposal-class-properties", { "loose": true }],
+                        "@babel/plugin-transform-runtime", // or can use 'react-hot-loader/webpack' instead
+                        "react-hot-loader/babel",
+                        ["import", {
+                            "libraryName": "antd",
+                            "style": false,
+                            "libraryDirectory": "es"
+                        }],
+                    ]
+                },
                 exclude: /node_modules/
             },
+            // {
+            //     test: /\.jsx?$/,
+            //     use: 'react-hot-loader/webpack',
+            //     exclude: /node_modules/
+            // },
             {
                 test: /\.css$/,
-                loader: "style!css"
+                use: ["style-loader", "css-loader"]
             },
             {
                 test: /\.scss$/,
-                loader: "style!css!sass"
+                use: [{
+                    loader: "style-loader"
+                }, {
+                    loader: "css-loader"
+                }, {
+                    loader: "sass-loader"
+                }]
             },
             {
                 test: /\.less$/,
-                loader: "style!css!less"
+                use: [{
+                    loader: "style-loader"
+                }, {
+                    loader: "css-loader"
+                }, {
+                    loader: "less-loader",
+                    options: {
+                        javascriptEnabled: true
+                    }
+                }]
             },
             {
                 test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
                 loader: "url-loader?limit=10000&minetype=application/font-woff"
             },
             {
-                test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, loader: "file-loader"
+                test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                loader: "file-loader"
             }
 
         ]
-    },
-    plugins: [
-        new webpack.NormalModuleReplacementPlugin(
-            /^react-awesome-query-builder/, function (data) {
-                const suffix = data.request.substring('react-awesome-query-builder'.length);
-                data.request = path.resolve(__dirname, '../modules/' + suffix);
-            }
-        ),
-    ]
+    }
 };
